@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.min.js"></script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans" x-data="shopCart()">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-blue-600">Nama Toko Anda</h1>
+                <p class="text-xs text-gray-500">Admin: <span class="font-semibold">Nama Admin</span> | Usaha: <span class="font-semibold">Nama Usaha</span></p>
+            </div>
+            <button @click="openCart = true" class="relative p-2 bg-blue-100 rounded-full">
+                🛒 <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full px-1.5" x-text="cart.length"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 rounded-2xl shadow-sm">
+            
+            <div x-data="{ activeSlide: 1 }">
+                <div class="relative h-80 overflow-hidden rounded-xl bg-gray-200">
+                    <div x-show="activeSlide === 1" class="h-full"><img src="https://via.placeholder.com/600x400?text=Gambar+1" class="w-full h-full object-cover"></div>
+                    <div x-show="activeSlide === 2" class="h-full"><img src="https://via.placeholder.com/600x400?text=Gambar+2" class="w-full h-full object-cover"></div>
+                    <div x-show="activeSlide === 3" class="h-full"><img src="https://via.placeholder.com/600x400?text=Gambar+3" class="w-full h-full object-cover"></div>
+                    <div x-show="activeSlide === 4" class="h-full flex items-center justify-center bg-black">
+                        <video controls class="w-full h-full">
+                            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-4 overflow-x-auto no-scrollbar">
+                    <button @click="activeSlide = 1" :class="activeSlide === 1 ? 'border-blue-500' : ''" class="border-2 rounded-md overflow-hidden w-20 h-20 flex-shrink-0"><img src="https://via.placeholder.com/100?text=1" class="w-full h-full"></button>
+                    <button @click="activeSlide = 2" :class="activeSlide === 2 ? 'border-blue-500' : ''" class="border-2 rounded-md overflow-hidden w-20 h-20 flex-shrink-0"><img src="https://via.placeholder.com/100?text=2" class="w-full h-full"></button>
+                    <button @click="activeSlide = 3" :class="activeSlide === 3 ? 'border-blue-500' : ''" class="border-2 rounded-md overflow-hidden w-20 h-20 flex-shrink-0"><img src="https://via.placeholder.com/100?text=3" class="w-full h-full"></button>
+                    <button @click="activeSlide = 4" :class="activeSlide === 4 ? 'border-blue-500' : ''" class="border-2 rounded-md overflow-hidden w-20 h-20 flex-shrink-0 flex items-center justify-center bg-gray-800 text-white text-[10px]">VIDEO</button>
+                </div>
+            </div>
+
+            <div x-data="product = { id: 1, name: 'Produk Unggulan A', type: 'Elektronik', price: 1500000, spec: 'P: 20cm, L: 10cm, B: 500g' }">
+                <span class="text-blue-500 text-sm font-semibold uppercase tracking-wider" x-text="product.type"></span>
+                <h2 class="text-3xl font-bold mt-2" x-text="product.name"></h2>
+                <p class="text-2xl text-red-500 font-bold mt-4" x-text="formatRupiah(product.price)"></p>
+                
+                <div class="mt-6 border-t pt-4">
+                    <p class="font-semibold mb-2">Spesifikasi:</p>
+                    <ul class="text-gray-600 text-sm space-y-1">
+                        <li>📏 Dimensi: <span x-text="product.spec"></span></li>
+                        <li>✅ Stok Ready</li>
+                    </ul>
+                </div>
+
+                <div class="mt-8 flex flex-col gap-3">
+                    <button @click="addToCart(product)" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">
+                        + Tambah ke Keranjang
+                    </button>
+                    <button @click="askReady(product.name)" class="w-full border border-green-500 text-green-600 py-3 rounded-lg font-bold hover:bg-green-50 transition">
+                        💬 Tanya Stok via WA
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-lg font-bold">Nama Toko Anda</h3>
+            <p class="text-gray-400 text-sm mt-2">Admin: Nama Admin | Lokasi: Bekasi, Indonesia</p>
+            <p class="text-gray-500 text-xs mt-4">&copy; 2025 All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <div x-show="openCart" class="fixed inset-0 z-[60] flex justify-end" style="background: rgba(0,0,0,0.5)">
+        <div class="w-full max-w-md bg-white h-full p-6 shadow-xl flex flex-col" @click.away="openCart = false">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Keranjang Belanja</h2>
+                <button @click="openCart = false" class="text-2xl">&times;</button>
+            </div>
+
+            <div class="flex-grow overflow-y-auto">
+                <template x-if="cart.length === 0">
+                    <p class="text-center text-gray-500 mt-10">Keranjang masih kosong.</p>
+                </template>
+                <template x-for="(item, index) in cart" :key="index">
+                    <div class="flex justify-between items-center mb-4 p-3 border rounded-lg">
+                        <div>
+                            <p class="font-bold" x-text="item.name"></p>
+                            <p class="text-sm text-gray-500" x-text="formatRupiah(item.price)"></p>
+                        </div>
+                        <button @click="removeFromCart(index)" class="text-red-500 text-sm">Hapus</button>
+                    </div>
+                </template>
+            </div>
+
+            <div class="border-t pt-4 mt-4" x-show="cart.length > 0">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1">Nama Lengkap:</label>
+                    <input type="text" x-model="buyerName" class="w-full border p-2 rounded" placeholder="Nama Anda">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1">Lokasi:</label>
+                    <input type="text" x-model="buyerLocation" class="w-full border p-2 rounded" placeholder="Alamat Singkat">
+                </div>
+                <div class="flex justify-between font-bold mb-4">
+                    <span>Total:</span>
+                    <span x-text="formatRupiah(totalPrice())"></span>
+                </div>
+                <button @click="checkoutWhatsApp" class="w-full bg-green-500 text-white py-3 rounded-lg font-bold">
+                    Beli Sekarang (WhatsApp)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function shopCart() {
+            return {
+                openCart: false,
+                cart: [],
+                buyerName: '',
+                buyerLocation: '',
+                waNumber: '628123456789', // Ganti dengan nomor WA Anda
+
+                addToCart(product) {
+                    this.cart.push({...product});
+                    this.openCart = true;
+                },
+                removeFromCart(index) {
+                    this.cart.splice(index, 1);
+                },
+                totalPrice() {
+                    return this.cart.reduce((total, item) => total + item.price, 0);
+                },
+                formatRupiah(num) {
+                    return 'Rp ' + num.toLocaleString('id-ID');
+                },
+                askReady(productName) {
+                    const msg = encodeURIComponent(`Halo Admin, apakah produk "${productName}" ready? Apakah harganya bisa berubah?`);
+                    window.open(`https://wa.me/${this.waNumber}?text=${msg}`, '_blank');
+                },
+                checkoutWhatsApp() {
+                    if(!this.buyerName || !this.buyerLocation) {
+                        alert("Mohon isi nama dan lokasi dulu ya!");
+                        return;
+                    }
+
+                    let itemText = "";
+                    this.cart.forEach((item, i) => {
+                        itemText += `${i+1}. ${item.name} (${this.formatRupiah(item.price)})\n`;
+                    });
+
+                    const msg = encodeURIComponent(
+                        `Halo Admin, saya ingin memesan:\n\n` +
+                        `*Nama:* ${this.buyerName}\n` +
+                        `*Lokasi:* ${this.buyerLocation}\n\n` +
+                        `*Pesanan:*\n${itemText}\n` +
+                        `*Total:* ${this.formatRupiah(this.totalPrice())}\n\n` +
+                        `_Catatan: Jika ingin melakukan transaksi maka wajib DP 30% dari total harga._`
+                    );
+                    
+                    window.open(`https://wa.me/${this.waNumber}?text=${msg}`, '_blank');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
